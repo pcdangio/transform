@@ -10,16 +10,20 @@ class transform
 {
 public:
     // CONSTRUCTORS
-    /// \brief Instantiates a new identity transformation_t object.
+    /// \brief Creates a new identity transform instance.
     transform();
-    /// \brief Instantiates a new transformation_t object.
+    /// \brief Creates a new transform instance from a translation and Euler rotation.
+    /// \param translation The translation component of the transform.
+    /// \param rotation The Euler angle rotation of the transform.
+    transform(const Eigen::Vector3d& translation, const Eigen::Vector3d& rotation);
+    /// \brief Creates a new transform instance from a translation and quaternion rotation.
     /// \param translation The translation component of the transformation.
     /// \param rotation The rotation component of the transformation.
     transform(const Eigen::Vector3d& translation, const Eigen::Quaterniond& rotation);
-    /// \brief Instantiates a new transformation_t object with an identity rotation.
+    /// \brief Creates a new transform instance from a translation.
     /// \param translation The translation component of the transformation.
     transform(const Eigen::Vector3d& translation);
-    /// \brief Instantiates a new transformation_t object with an identity translation.
+    /// \brief Creates a new transform instance from a rotation.
     /// \param rotation The rotation component of the transformation.
     transform(const Eigen::Quaterniond& rotation);
 
@@ -67,7 +71,5 @@ private:
     /// \brief The transform's rotation component.
     Eigen::Quaterniond m_rotation;
 };
-
-}
 
 #endif

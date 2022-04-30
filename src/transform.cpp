@@ -6,6 +6,14 @@ transform::transform()
     transform::m_translation.setZero();
     transform::m_rotation.setIdentity();
 }
+transform::transform(const Eigen::Vector3d& translation, const Eigen::Vector3d& rotation)
+    : m_translation(translation)
+{
+    // Convert Euler rotation to a quaternion.
+    transform::m_rotation = Eigen::AngleAxisd(rotation.x(), Eigen::Vector3d::UnitX()) *
+                            Eigen::AngleAxisd(rotation.y(), Eigen::Vector3d::UnitY()) *
+                            Eigen::AngleAxisd(rotation.z(), Eigen::Vector3d::UnitZ());
+}
 transform::transform(const Eigen::Vector3d& translation, const Eigen::Quaterniond& rotation)
     : m_translation(translation),
       m_rotation(rotation)
