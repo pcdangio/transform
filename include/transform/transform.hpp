@@ -6,26 +6,12 @@
 #include <eigen3/Eigen/Dense>
 
 /// \brief Represents a 3D transformation between coordinate frames.
-class transform
+struct transform
 {
 public:
     // CONSTRUCTORS
     /// \brief Creates a new identity transform instance.
     transform();
-    /// \brief Creates a new transform instance from a translation and Euler rotation.
-    /// \param translation The translation component of the transform.
-    /// \param rotation The Euler angle rotation of the transform.
-    transform(const Eigen::Vector3d& translation, const Eigen::Vector3d& rotation);
-    /// \brief Creates a new transform instance from a translation and quaternion rotation.
-    /// \param translation The translation component of the transformation.
-    /// \param rotation The rotation component of the transformation.
-    transform(const Eigen::Vector3d& translation, const Eigen::Quaterniond& rotation);
-    /// \brief Creates a new transform instance from a translation.
-    /// \param translation The translation component of the transformation.
-    transform(const Eigen::Vector3d& translation);
-    /// \brief Creates a new transform instance from a rotation.
-    /// \param rotation The rotation component of the transformation.
-    transform(const Eigen::Quaterniond& rotation);
 
     // MODIFIERS
     /// \brief Calculates the inverse of the transform.
@@ -55,21 +41,22 @@ public:
     /// \param position The 3D position of the pose.
     /// \param orientation The 3D quaternion representation of the pose orientation.
     void apply(Eigen::Vector3d& position, Eigen::Quaterniond& orientation) const;
-
-    // ACCESS
-    /// \brief Gets the translation component of this transform.
-    /// \returns A const reference to the translation component.
-    const Eigen::Vector3d& translation() const;
-    /// \brief Gets the rotation component of this transform.
-    /// \returns A const reference to the rotation component.
-    const Eigen::Quaterniond& rotation() const;
     
-private:
     // VARIABLES
     /// \brief The transform's translation component.
-    Eigen::Vector3d m_translation;
+    Eigen::Vector3d translation;
     /// \brief The transform's rotation component.
-    Eigen::Quaterniond m_rotation;
+    Eigen::Quaterniond rotation;
+
+    // CONVERSIONS
+    /// \brief Converts a quaternion rotation to a Euler rotation.
+    /// \param quaternion The quaternion to convert.
+    /// \returns The converted Euler rotation.
+    static Eigen::Vector3d to_euler(const Eigen::Quaterniond& quaternion);
+    /// \brief Converts a Euler rotation to a quaternion rotation.
+    /// \param euler The Euler rotation to convert.
+    /// \returns The converted quaternion.
+    static Eigen::Quaterniond to_quaternion(const Eigen::Vector3d& euler);
 };
 
 #endif

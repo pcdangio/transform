@@ -3,30 +3,8 @@
 // CONSTRUCTORS
 transform::transform()
 {
-    transform::m_translation.setZero();
-    transform::m_rotation.setIdentity();
-}
-transform::transform(const Eigen::Vector3d& translation, const Eigen::Vector3d& rotation)
-    : m_translation(translation)
-{
-    // Convert Euler rotation to a quaternion.
-    transform::m_rotation = Eigen::AngleAxisd(rotation.x(), Eigen::Vector3d::UnitX()) *
-                            Eigen::AngleAxisd(rotation.y(), Eigen::Vector3d::UnitY()) *
-                            Eigen::AngleAxisd(rotation.z(), Eigen::Vector3d::UnitZ());
-}
-transform::transform(const Eigen::Vector3d& translation, const Eigen::Quaterniond& rotation)
-    : m_translation(translation),
-      m_rotation(rotation)
-{}
-transform::transform(const Eigen::Vector3d& translation)
-    : m_translation(translation)
-{
-    transform::m_rotation.setIdentity();
-}
-transform::transform(const Eigen::Quaterniond& rotation)
-    : m_rotation(rotation)
-{
-    transform::m_translation.setZero();
+    transform::translation.setZero();
+    transform::rotation.setIdentity();
 }
 
 // MODIFIERS
@@ -37,51 +15,51 @@ transform transform::inverse() const
     transform inverted;
 
     // Invert the translation.
-    inverted.m_translation = transform::m_translation * -1.0;
+    inverted.translation = transform::translation * -1.0;
 
     // Invert the rotation.
-    inverted.m_rotation = transform::m_rotation.inverse();
+    inverted.rotation = transform::rotation.inverse();
 
     return inverted;
 }
 void transform::invert()
 {
     // Invert the translation.
-    transform::m_translation *= 1.0;
+    transform::translation *= 1.0;
 
     // Invert the rotation.
-    transform::m_rotation = transform::m_rotation.inverse();
+    transform::rotation = transform::rotation.inverse();
 }
 
 // APPLICATIONS
 void transform::rotate(Eigen::Vector3d& vector) const
 {
     // Apply this transform's rotation to the original vector.
-    vector = transform::m_rotation * vector;
+    vector = transform::rotation * vector;
 }
 void transform::translate(Eigen::Vector3d& vector) const
 {
     // Add the transform's translation to the rotated vector.
-    vector += transform::m_translation;
+    vector += transform::translation;
 }
 void transform::apply(transform& transform) const
 {
     // Apply this transform's rotation to the original transform.
-    transform.m_rotation = transform::m_rotation * transform.m_rotation;
-    transform.m_translation = transform::m_rotation * transform.m_translation;
+    transform.rotation = transform::rotation * transform.rotation;
+    transform.translation = transform::rotation * transform.translation;
     // Normalize the transformed rotation for numerical stability.
-    transform.m_rotation.normalize();
+    transform.rotation.normalize();
 
     // Add this transform's translation to the now rotated original translation.
-    transform.m_translation += transform::m_translation;
+    transform.translation += transform::translation;
 }
 void transform::apply(Eigen::Vector3d& vector) const
 {
     // Apply this transform's rotation to the original vector.
-    vector = transform::m_rotation * vector;
+    vector = transform::rotation * vector;
 
     // Add the transform's translation to the rotated vector.
-    vector += transform::m_translation;
+    vector += transform::translation;
 }
 void transform::apply(Eigen::Vector3d& position, Eigen::Vector3d& orientation) const
 {
@@ -99,23 +77,28 @@ void transform::apply(Eigen::Vector3d& position, Eigen::Vector3d& orientation) c
 void transform::apply(Eigen::Vector3d& position, Eigen::Quaterniond& orientation) const
 {
     // Apply this transform's rotation to the orientation.
-    orientation = transform::m_rotation * orientation;
+    orientation = transform::rotation * orientation;
     // Normalize the transformed orientation for numerical stability.
     orientation.normalize();
 
     // Apply this transform's rotation to the position.
-    position = transform::m_rotation * position;
+    position = transform::rotation * position;
 
     // Add this transform's translation to the position.
-    position += transform::m_translation;
+    position += transform::translation;
 }
 
-// ACCESS
-const Eigen::Vector3d& transform::translation() const
+// CONVERSION
+Eigen::Vector3d transform::to_euler(const Eigen::Quaterniond& quaternion)
 {
-    return transform::m_translation;
+    return quaternion.toRotationMatrix().eulerAngles(0, 1, 2);
 }
-const Eigen::Quaterniond& transform::rotation() const
+Eigen::Quaterniond transform::to_quaternion(const Eigen::Vector3d& euler)
 {
-    return transform::m_rotation;
+    // Convert Euler rotation to a quaternion.
+    Eigen::Quaterniond output = Eigen::AngleAxisd(euler.x(), Eigen::Vector3d::UnitX()) *
+                                Eigen::AngleAxisd(euler.y(), Eigen::Vector3d::UnitY()) *
+                                Eigen::AngleAxisd(euler.z(), Eigen::Vector3d::UnitZ());
+
+    return output;
 }
