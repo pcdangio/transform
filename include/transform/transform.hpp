@@ -1,22 +1,22 @@
 /// \file transform/transform.hpp
-/// \brief Defines the transform class.
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
+/// \brief Defines the transform::transform_t class.
+#ifndef TRANSFORM___TRANSFORM_H
+#define TRANSFORM___TRANSFORM_H
 
 #include <eigen3/Eigen/Dense>
 
 /// \brief Represents a 3D transformation between coordinate frames.
-struct transform
+struct transform_t
 {
 public:
     // CONSTRUCTORS
     /// \brief Creates a new identity transform instance.
-    transform();
+    transform_t();
 
     // MODIFIERS
     /// \brief Calculates the inverse of the transform.
     /// \returns The inverted transform.
-    transform inverse() const;
+    transform_t inverse() const;
     /// \brief Inverts this transform in place.
     void invert();
 
@@ -29,7 +29,7 @@ public:
     void translate(Eigen::Vector3d& vector) const;
     /// \brief Performs an in-place chain on top of another transform.
     /// \param transform The transform to chain in place.
-    void apply(transform& transform) const;
+    void apply(transform_t& transform) const;
     /// \brief Transforms a 3D point or vector in place.
     /// \param vector The 3D point or vector to transform.
     void apply(Eigen::Vector3d& vector) const;
