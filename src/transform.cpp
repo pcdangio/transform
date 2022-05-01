@@ -1,5 +1,7 @@
 #include <transform/transform.hpp>
 
+using namespace transform;
+
 // CONSTRUCTORS
 transform_t::transform_t()
 {

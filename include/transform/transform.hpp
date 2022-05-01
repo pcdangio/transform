@@ -5,6 +5,9 @@
 
 #include <eigen3/Eigen/Dense>
 
+/// \brief Contains all objects for the transform library.
+namespace transform {
+
 /// \brief Represents a 3D transformation between coordinate frames.
 struct transform_t
 {
@@ -58,5 +61,7 @@ public:
     /// \returns The converted quaternion.
     static Eigen::Quaterniond to_quaternion(const Eigen::Vector3d& euler);
 };
+
+}
 
 #endif
